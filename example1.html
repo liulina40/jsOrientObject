@@ -1,0 +1,120 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="jquery-2.2.3.min.js"></script>
+  <!--<script type="text/javascript" src="UpdateData.js"></script>-->
+  <script type="text/javascript">
+    function UpdateData(id, value, parentEle) {
+      this.id = id
+      this.value = value
+      this.parentEle = parentEle
+      this.initValue = value
+
+      this.initElements()
+      this.initEvents()
+    }
+    UpdateData.prototype = {
+      constructor: UpdateData,
+      /**
+       * 初始化所有元素
+       */
+      initElements() {
+        this.txtEle = $("<span/>")
+        this.txtEle.text(this.value)
+
+        this.textEle = $("<input type='text'/>")
+        this.textEle.val(this.value)
+
+        this.btnDiv = $("<div style='display:inline;'/>")
+        this.saveBtn = $("<input type='button' value='保存'/>")
+        this.cancelBtn = $("<input type='button' value='取消'/>")
+        this.btnDiv.append(this.saveBtn).append(this.cancelBtn)
+
+        this.parentEle.append(this.txtEle).append(this.textEle).append(this.btnDiv)
+
+        this.convertToReadable()
+      },
+      /**
+       * 切换到查看模式
+       */
+      convertToReadable() {
+        this.txtEle.show()
+        this.textEle.hide()
+        this.btnDiv.hide()
+      },
+      /**
+       * 初始化所有事件
+       */
+      initEvents() {
+        var this_ = this
+        this.txtEle.on('click', function(event) {
+          this_.convertToEditable()
+        })
+        this.cancelBtn.on('click', function() {
+          this_.cancel()
+        })
+        this.saveBtn.on('click', function() {
+          this_.save()
+        })
+      },
+      /**
+       * 切换到编辑模式
+       */
+      convertToEditable() {
+        this.txtEle.hide()
+        this.textEle.show()
+        this.textEle.focus()
+        if (this.getValue() === this.initValue) {
+          this.textEle.val("")
+        }
+        this.btnDiv.show()
+      },
+      /**
+       * 点击保存
+       */
+      save() {
+        this.setValue(this.textEle.val())
+        this.txtEle.html(this.getValue().replace(/\n/g, "<br/>"))
+          // 把回车替换为<br/>,g --- 一直到最后一个
+        this.convertToReadable()
+      },
+      cancel() {
+        this.textEle.val(this.getValue())
+        this.convertToReadable()
+      },
+      setValue(value) {
+        this.value = value
+      },
+      getValue() {
+        return this.value
+      }
+    }
+    $(function() {
+      $("ul li").each(function() {
+        new UpdateData($(this).attr("id"), "请输出成绩...", $(this))
+      })
+    })
+
+  </script>
+  <style type="text/css">
+    body {
+      font-size: 14px;
+      color: #eaa;
+    }
+    
+    ul li {
+      line-height: 30px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <ul>
+    <li id="1">张三:</li>
+    <li id="2">李四:</li>
+    <li id="3">王五:</li>
+  </ul>
+</body>
+
+</html>
